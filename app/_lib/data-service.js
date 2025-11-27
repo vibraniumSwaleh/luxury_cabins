@@ -12,9 +12,6 @@ export async function getCabin(id) {
     .eq('id', id)
     .single();
 
-  // For testing
-  // await new Promise((res) => setTimeout(res, 1000));
-
   if (error) {
     console.error(error);
     notFound();
@@ -223,5 +220,34 @@ export async function deleteBooking(id) {
     console.error(error);
     throw new Error('Booking could not be deleted');
   }
+  return data;
+}
+
+/////////////
+// FILTER BY CAPACITY
+
+export async function getCabinsByCapacity(capacity) {
+  let query = supabase
+    .from('cabins')
+    .select('id, name, maxCapacity, regularPrice, discount, image');
+
+  // Apply filters based on capacity type
+  if (capacity === 'small') {
+    query = query.lte('maxCapacity', 3);
+  } else if (capacity === 'medium') {
+    query = query.gte('maxCapacity', 4).lte('maxCapacity', 7);
+  } else if (capacity === 'large') {
+    query = query.gte('maxCapacity', 8);
+  }
+
+  query = query.order('name');
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error(error);
+    throw new Error('Cabins could not be loaded');
+  }
+
   return data;
 }
