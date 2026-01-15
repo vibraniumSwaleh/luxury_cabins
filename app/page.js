@@ -11,7 +11,7 @@ export default function Page() {
         fill
         placeholder='blur'
         quality={80}
-        className='object-cover object-top -z-10'
+        className='object-cover object-top'
       />
 
       <div className='relative z-10 text-center'>
