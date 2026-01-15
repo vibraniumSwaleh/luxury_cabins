@@ -3,6 +3,8 @@
 import { revalidatePath } from 'next/cache';
 import { signIn, signOut, auth } from './auth';
 import { supabase } from '@/app/_lib/supabase';
+import { redirect } from 'next/navigation';
+import { getBookings } from './data-service';
 
 export async function signInAction() {
   await signIn('google', { redirectTo: '/account' });
@@ -36,7 +38,6 @@ export async function updateGuest(formData) {
 
 export async function deleteReservation(bookingId) {
   const session = await auth();
-
   if (!session) throw new Error('Unauthorized - Please sign in to continue.');
 
   const { error } = await supabase
@@ -47,4 +48,29 @@ export async function deleteReservation(bookingId) {
 
   if (error) throw new Error('Booking could not be deleted');
   revalidatePath('/account/reservations');
+}
+
+export async function updateReservation(formData) {
+  const session = await auth();
+  if (!session) throw new Error('Unauthorized - Please sign in to continue.');
+
+  const updateData = {
+    numGuests: Number(formData.get('numGuests')),
+    observations: formData.get('observations').slice(0, 1000),
+  };
+  const bookingId = Number(formData.get('bookingId'));
+
+  const { error } = await supabase
+    .from('bookings')
+    .update(updateData)
+    .eq('id', bookingId)
+    .select()
+    .single()
+    .eq('guestId', session.user.guestId);
+
+  if (error) throw new Error('Booking could not be updated');
+
+  revalidatePath('/account/reservations');
+  revalidatePath(`/account/reservations/edit/${bookingId}`);
+  redirect('/account/reservations');
 }
