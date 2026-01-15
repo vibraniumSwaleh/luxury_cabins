@@ -1,4 +1,6 @@
 import Image from 'next/image';
+import Image1 from '@/public/about-1.jpg';
+import Image2 from '@/public/about-2.jpg';
 import { getCabins } from '../_lib/data-service';
 
 export const revalidate = 86400;
@@ -42,7 +44,7 @@ export default async function Page() {
 
       <div className='col-span-2 relative aspect-square'>
         <Image
-          src='/about-1.jpg'
+          src={Image1}
           alt='Family sitting around a fire pit in front of cabin'
           priority={true}
           placeholder='blur'
@@ -54,7 +56,7 @@ export default async function Page() {
 
       <div className='col-span-2 relative aspect-square'>
         <Image
-          src='/about-2.jpg'
+          src={Image2}
           priority={true}
           alt='Family that manages The Wild Oasis'
           placeholder='blur'
