@@ -5,6 +5,7 @@ import { signIn, signOut, auth } from './auth';
 import { supabase } from '@/app/_lib/supabase';
 import { redirect } from 'next/navigation';
 import { getBookings } from './data-service';
+import { set } from 'date-fns';
 
 export async function signInAction() {
   await signIn('google', { redirectTo: '/account' });
