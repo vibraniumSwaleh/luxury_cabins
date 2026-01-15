@@ -4,8 +4,6 @@ import { revalidatePath } from 'next/cache';
 import { signIn, signOut, auth } from './auth';
 import { supabase } from '@/app/_lib/supabase';
 import { redirect } from 'next/navigation';
-import { getBookings } from './data-service';
-import { set } from 'date-fns';
 
 export async function signInAction() {
   await signIn('google', { redirectTo: '/account' });
@@ -37,7 +35,7 @@ export async function updateGuest(formData) {
   revalidatePath('/account/profile');
 }
 
-export async function deleteReservation(bookingId) {
+export async function deleteBooking(bookingId) {
   const session = await auth();
   if (!session) throw new Error('Unauthorized - Please sign in to continue.');
 
@@ -74,4 +72,31 @@ export async function updateReservation(formData) {
   revalidatePath('/account/reservations');
   revalidatePath(`/account/reservations/edit/${bookingId}`);
   redirect('/account/reservations');
+}
+
+export async function createBooking(bookingData, formData) {
+  const session = await auth();
+  if (!session) throw new Error('Unauthorized - Please sign in to continue.');
+
+  const newBooking = {
+    ...bookingData,
+    guestId: session.user.guestId,
+    numGuests: Number(formData.get('numGuests')),
+    observations: formData.get('observations').slice(0, 1000),
+    extrasPrice: 0,
+    totalPrice: bookingData.cabinPrice,
+    isPaid: false,
+    hasBreakfast: false,
+    status: 'unconfirmed',
+  };
+
+  const { error } = await supabase
+    .from('bookings')
+    .insert([newBooking])
+    .select()
+    .eq('guestId', session.user.guestId);
+
+  if (error) throw new Error('Booking could not be created');
+  revalidatePath(`/cabins/${bookingData.cabinId}`);
+  redirect('/cabins/thankyou');
 }
