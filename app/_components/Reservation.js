@@ -1,8 +1,8 @@
-import LoginMessage from '@/starter/components/LoginMessage';
 import { getBookedDatesByCabinId, getSettings } from '../_lib/data-service';
 import DateSelector from './DateSelector';
 import ReservationForm from './ReservationForm';
 import { auth } from '../_lib/auth';
+import LoginMessage from './components/LoginMessage';
 
 async function Reservation({ cabin }) {
   const session = await auth();

@@ -1,7 +1,7 @@
 import Image from 'next/image';
-import about1 from '@/public/about-1.jpg';
-import about2 from '@/public/about-2.jpg';
-import { getCabin, getCabins } from '../_lib/data-service';
+import '@/public/about-1.jpg';
+import '@/public/about-2.jpg';
+import { getCabins } from '../_lib/data-service';
 
 export const revalidate = 86400;
 
