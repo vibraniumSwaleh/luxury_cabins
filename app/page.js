@@ -1,13 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import '@/public/bg.png';
-
 export default function Page() {
   return (
     <main className='mt-24'>
       <Image
-        src={bg}
+        src='/bg.png'
         alt='Mountains and forests with two cabins'
         priority={true}
         fill
